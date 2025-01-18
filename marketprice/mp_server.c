@@ -221,7 +221,7 @@ static int on_cmd_market_kline(nw_ses *ses, rpc_pkg *pkg, json_t *params)
 
     int ret = reply_result(ses, pkg, result);
     json_decref(result);
-    log_debug(result)
+    log_debug(result);
     return ret;
 }
 
