@@ -149,7 +149,6 @@ static int on_cmd_market_status(nw_ses *ses, rpc_pkg *pkg, json_t *params)
 
 static int on_cmd_market_kline(nw_ses *ses, rpc_pkg *pkg, json_t *params)
 {
-    reply_error_invalid_argument(ses, pkg);
     if (json_array_size(params) != 4)
         return reply_error_invalid_argument(ses, pkg);
 
@@ -222,6 +221,7 @@ static int on_cmd_market_kline(nw_ses *ses, rpc_pkg *pkg, json_t *params)
 
     int ret = reply_result(ses, pkg, result);
     json_decref(result);
+    log_debug(result)
     return ret;
 }
 
