@@ -69,16 +69,19 @@ static void on_result(struct state_data *state, sds token, json_t *result)
         log_error("SESSION ID NOT SAME");
         return;
     if (result == NULL)
-        log_error("SESSION ID NOT SAME");
+        log_error("no result from frontend server");
         goto error;
 
     json_t *code = json_object_get(result, "code");
     if (code == NULL)
+        log_error("no code given");
         goto error;
     int error_code = json_integer_value(code);
     if (error_code != 0) {
+        log_error("code not null");
         const char *message = json_string_value(json_object_get(result, "message"));
         if (message == NULL)
+            log_error("message is null");
             goto error;
         log_error("auth fail, token: %s, code: %d, message: %s", token, error_code, message);
         send_error(state->ses, state->request_id, 11, message);
@@ -87,13 +90,16 @@ static void on_result(struct state_data *state, sds token, json_t *result)
 
     json_t *data = json_object_get(result, "data");
     if (data == NULL)
+        log_error("data is null");
         goto error;
     struct clt_info *info = state->info;
     uint32_t user_id = json_integer_value(json_object_get(data, "user_id"));
     if (user_id == 0)
+        log_error("user_id is null");
         goto error;
 
     if (info->auth && info->user_id != user_id) {
+        log_error("asset_unsubscribe and order_unsubscribe");
         asset_unsubscribe(info->user_id, state->ses);
         order_unsubscribe(info->user_id, state->ses);
     }
