@@ -67,12 +67,6 @@ static void on_result(struct state_data *state, sds token, json_t *result)
 {
     if (state->ses->id != state->ses_id)
         log_error("SESSION ID NOT SAME");
-        json_t *data = json_object_get(result, "data");
-        uint32_t user_id = json_integer_value(json_object_get(data, "user_id"));
-        info->auth = true;
-        info->user_id = user_id;
-        log_info("auth success, token: %s, user_id: %u", token, info->user_id);
-        send_success(state->ses, state->request_id);
         return;
     if (result == NULL)
         log_error("no result from frontend server");
