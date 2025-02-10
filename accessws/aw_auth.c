@@ -65,17 +65,22 @@ cleanup:
 
 static void on_result(struct state_data *state, sds token, json_t *result)
 {
-    log_error("STARTING");
+    if (state->ses->id != state->ses_id)
+        log_error("SESSION ID NOT SAME");
+        info->auth = true;
+        info->user_id = user_id;
+        log_info("auth success, token: %s, user_id: %u", token, info->user_id);
+        send_success(state->ses, state->request_id);
+        return;
     if (result == NULL)
         log_error("no result from frontend server");
         goto error;
-    log_error("PASSED1");
+
     json_t *code = json_object_get(result, "code");
     if (code == NULL)
         log_error("no code given");
         goto error;
     int error_code = json_integer_value(code);
-    log_error("PASSED2");
     if (error_code != 0) {
         log_error("code not null");
         const char *message = json_string_value(json_object_get(result, "message"));
@@ -86,7 +91,7 @@ static void on_result(struct state_data *state, sds token, json_t *result)
         send_error(state->ses, state->request_id, 11, message);
         return;
     }
-    log_error("PASSED3");
+
     json_t *data = json_object_get(result, "data");
     if (data == NULL)
         log_error("data is null");
@@ -96,13 +101,13 @@ static void on_result(struct state_data *state, sds token, json_t *result)
     if (user_id == 0)
         log_error("user_id is null");
         goto error;
-    log_error("PASSED4");
+
     if (info->auth && info->user_id != user_id) {
         log_error("asset_unsubscribe and order_unsubscribe");
         asset_unsubscribe(info->user_id, state->ses);
         order_unsubscribe(info->user_id, state->ses);
     }
-    log_error("PASSED5");
+
     info->auth = true;
     info->user_id = user_id;
     log_info("auth success, token: %s, user_id: %u", token, info->user_id);
