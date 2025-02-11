@@ -67,7 +67,7 @@ static void on_result(struct state_data *state, sds token, json_t *result)
 {
     if (state->ses->id != state->ses_id)
         log_error("SESSION ID NOT SAME");
-        return;
+        
     if (result == NULL)
         log_error("no result from frontend server");
         goto error;
